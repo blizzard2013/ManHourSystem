@@ -8,4 +8,8 @@
 工时登记/修改
 工时审批/驳回
 工时统计
-工时数据导出
+工时数据导出等
+
+技术栈：
+前端-html/css/JavaScript/jQuery
+后端-flask/SQLAlchemy/sqlite
