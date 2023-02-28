@@ -1,6 +1,7 @@
 # ManHourSystem
 内部工时统计系统
 
+
 包含功能：
 
 注册/登录
@@ -18,6 +19,9 @@
 工时数据导出等
 
 
+
 技术栈：
+
 前端-html/css/JavaScript/jQuery
+
 后端-flask/SQLAlchemy/sqlite
