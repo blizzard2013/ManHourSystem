@@ -1,0 +1,92 @@
+{# 工时填写页面 #}
+{% extends "base.html" %}  {# 继承父模板 #}
+{% import "bootstrap/wtf.html" as wtf %}  {# 导入表单渲染模板 #}
+{#{% import "_macros.html" as macros %}  {# 导入分页模板宏 #}
+
+{% block title %}底盘开发部 - 工时填写{% endblock %}  {# 页面标题 #}
+
+{% block page_content %}
+
+{# 欢迎口号 #}
+<div class="page-header">
+{#    <h1>Hello, {% if current_user.is_authenticated %}{{ current_user.name }}{% else %}Stranger{% endif %}!</h1>#}
+    <h1>
+        {% if current_user.can(Permission.WRITE) %}
+            Hello, {{ current_user.name }}
+{#            奥力给！ {{ current_user.name }}#}
+        {% else %}
+            你好，奋斗者！Hello, Fighter!
+        {% endif %}
+    </h1>
+
+</div>
+
+
+
+{# 写工时 #}
+<div>
+
+    {# 如果用户所属角色没有WRITE 权限，经User.can() 方法检查后，不会显示写博客表单 #}
+    {# can(Permission.WRITE_ARTICLES) ？#}
+    {% if current_user.can(Permission.WRITE) and workeditflag %}
+        {{ wtf.quick_form(form) }}
+{##}
+{#        #}
+{#        工时填写表单自由排布#}
+{#        <form action="{{ url_for('.workhour') }}">#}
+{#            <div class="row">#}
+{#                 项目 project_id -> 通过id查项目名称#}
+{#                <div class="post-author"><a href="{{ url_for('.user', name=post.author.name) }}">{{ post.author.name }}</a></div>#}
+{#                <div class="col-sm-2 col-md-2">{{ form.project }}</div>#}
+{#                 时间 submit_time#}
+{#                <div class="ol-sm-1 col-md-1">{{ form.work }}</div>#}
+{#                 状态 state#}
+{#                <div class="ol-sm-2 col-md-2">{{ form.hour }}</div>#}
+{#                 工作内容 work#}
+{#                <div class="ol-sm-6 col-md-6">{{ form.submit }}</div>#}
+{#            </div>#}
+{#        </form>#}
+
+    {% endif %}
+
+{# 动态添加输入框 #}
+{#<script>var i=1</script>#}
+{#<input type=button onclick="document.body.insertAdjacentHTML('beforeEnd','<input type=text name='+i+' value='+i+++'> ')" value=添加>#}
+
+
+</div>
+
+{# 工时列表 #}
+{#<div class="post-tabs">#}
+    {# 从_workhours.html导入模板：工时列表 #}
+    {% include '_workhours.html' %}
+{#</div>#}
+
+
+{#提交按钮#}
+<div class="text-center">
+    {# 如果用户所属角色没有WRITE 权限，经User.can() 方法检查后，不会显示写博客表单 #}
+    {# can(Permission.WRITE_ARTICLES) ？#}
+
+    <h3>总工时：{{ totalhour | round(3) }}</h3>
+
+    {% if current_user.can(Permission.WRITE) and workeditflag %}
+
+{#    {% if current_user.can(Permission.WRITE) and totalhour == 1 %}#}
+        {{ wtf.quick_form(form2) }}
+{#    {% endif %}#}
+
+    {% endif %}
+
+    <br><br><br><br><br><br><br>
+
+
+</div>
+
+{% endblock %}
+
+
+
+
+
+

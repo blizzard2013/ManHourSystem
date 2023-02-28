@@ -1,0 +1,154 @@
+{# 工时列表模板 #}
+
+{# 正文格式：行高2 位置右/中 #}
+
+<ul class="posts">
+{#         格式：行高1 位置左 #}
+
+{#    表头部分 #}
+    <li class="post">
+{#         格式：行高2 位置中 #}
+{#        <div class="post-content">   #}
+
+        <div class="row">
+            {# 项目 project_id -> 通过id查项目名称 #}
+{#            <div class="post-author"><a href="{{ url_for('.user', name=post.author.name) }}">{{ post.author.name }}</a></div>#}
+            <div class="col-md-2">项目</div>
+            <div class="col-md-4">工作内容</div>
+            <div class="col-md-1">工时</div>
+            <div class="col-md-2">填写时间</div>
+            <div class="col-md-2">当前状态</div>
+        </div>
+{#        </div>#}
+    </li>
+
+
+{#    工时列表 & 格式 #}
+{#{% set totalhour = 0 %}#}
+
+    {% for workhour in workhours %}
+
+{#        工时不会循环计算？ why #}
+{#        {% set totalhour = totalhour + workhour.hour %}#}
+{#            当前总工时：{{ totalhour }}#}
+
+{#        {{ totalhour = totalhour + workhour.hour }}#}
+
+    <li class="post">
+    {# 单项工时格式 #}
+{#        <div class="post-content">#}  {# 格式 右移 #}
+        <div>
+
+        <div class="row">
+            {# 项目 project_id -> 通过id查项目名称 #}
+{#            <div class="post-author"><a href="{{ url_for('.user', name=post.author.name) }}">{{ post.author.name }}</a></div>#}
+            <div class="col-md-2">{{ workhour.project.name }}</div>
+            <div class="col-md-4 ">{{ workhour.work }}</div>
+            <div class="col-md-1">{{ workhour.hour }}</div>
+{#            <div class="ol-sm-1 col-md-1">{{ moment(workhour.submit_time).fromNow() }}</div>#}
+            <div class="col-md-2">{{ workhour.submit_time.strftime('%Y-%m-%d %H:%M:%S') }}</div>
+            <div class="col-md-1">{{ workhour.state }}</div>
+
+{#        </div>#}
+
+{#             文章的固定链接及各种按钮 显示在文章下方 #}
+{#            <div class="post-footer">#}
+
+{#            {% if workhour.state == "保存" %}#}
+            {% if workhour.state in ["保存", "驳回"] %}
+
+{#【+】弹窗测试#}
+{#<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">弹窗测试</button>#}
+
+{#                 帖子编辑按钮+删除按钮：当前用户在自己文章下加按钮 管理员在所有文章下加按钮 #}
+                {% if current_user == workhour.worker %}
+                    <a href="{{ url_for('.workhourEdit', id=workhour.id) }}">
+                        <span class="label label-primary">编辑 Edit</span></a>
+                    <a href="{{ url_for('.workhourDelete', id=workhour.id) }}">
+                        <span class="label label-danger">删除 Delete</span></a>
+
+                {% elif current_user.is_administrator() %}
+                    <a href="{{ url_for('.workhourEdit', id=workhour.id) }}">
+                        <span class="label label-danger">编辑 Edit [Admin]</span></a>
+                    <a href="{{ url_for('.workhourDelete', id=workhour.id) }}">
+                        <span class="label label-danger">删除 Delete [Admin]</span></a>
+                {% endif %}
+
+            {% endif %}
+
+{#                代码参考：post   #}
+                {# 帖子编辑按钮+删除按钮：当前用户在自己文章下加按钮 管理员在所有文章下加按钮 #}
+{#                {% if current_user == post.author %}#}
+{#                    <a href="{{ url_for('.edit', id=post.id) }}">#}
+{#                        <span class="label label-primary">编辑 Edit</span></a>#}
+{#                    <a href="{{ url_for('.delete', id=post.id) }}">#}
+{#                        <span class="label label-danger">删除 Delete</span></a>#}
+{##}
+{#                {% elif current_user.is_administrator() %}#}
+{#                    <a href="{{ url_for('.edit', id=post.id) }}">#}
+{#                        <span class="label label-danger">编辑 Edit [Admin]</span></a>#}
+{#                    <a href="{{ url_for('.delete', id=post.id) }}">#}
+{#                        <span class="label label-danger">删除 Delete [Admin]</span></a>#}
+{#                {% endif %}#}
+{#            #}
+                {# 帖子内容链接按钮 #}
+{#                <a href="{{ url_for('.post', id=post.id) }}">#}
+{#                    <span class="label label-default">博客链接 Permalink</span>#}
+{#                </a>#}
+{##}
+                {# 帖子评论链接按钮链 #}
+{#                <a href="{{ url_for('.post', id=post.id) }}#comments">#}
+{#                    <span class="label label-primary">{{ post.comments.count() }} 评论 Comments</span>#}
+{#                </a>#}
+            </div>
+
+        </div>
+    </li>
+    {% endfor %}
+
+
+</ul>
+
+
+{##}
+{# 【+】模态框 - JS #}
+{#<form action="{{ url_for('.index' ) }}" method="post">#}
+{#<form method="post">#}
+{##}
+{#<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">#}
+{#  <div class="modal-dialog" role="document">#}
+{#    <div class="modal-content">#}
+{#      <div class="modal-header">#}
+{#        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>#}
+{#        <h4 class="modal-title" id="exampleModalLabel">New message</h4>#}
+{#      </div>#}
+{#      <div class="modal-body">#}
+{#        <form>#}
+{#          <div class="form-group">#}
+{#            <label for="recipient-name" class="control-label">Recipient:</label>#}
+{#            <input type="text" class="form-control" id="recipient-name">#}
+{#          </div>#}
+{#          <div class="form-group">#}
+{#            <label for="message-text" class="control-label">Message:</label>#}
+{#            <textarea class="form-control" id="message-text"></textarea>#}
+{#          </div>#}
+{#        </form>#}
+{#      </div>#}
+{#      <div class="modal-footer">#}
+{#        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>#}
+{##}
+{#        <a href="{{ url_for('.moderate' ) }}">#}
+{#        <a href="{{ url_for('.index' ) }}">#}
+{#            <button type="button" class="btn btn-primary" >Send message</button>#}
+{#            <button type="submit" class="btn btn-primary" >Send message</button>#}
+{#            <button type="button" class="btn btn-primary" href="#main/moderate">Send message</button>#}
+{#            <button type="button" class="btn btn-primary" href="{{ url_for('.moderate' ) }}">Send message</button>#}
+{#        </a>#}
+{##}
+{#      </div>#}
+{#    </div>#}
+{#  </div>#}
+{#</div>#}
+{##}
+{##}
+{#</form>#}

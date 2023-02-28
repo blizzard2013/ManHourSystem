@@ -1,0 +1,26 @@
+{# 评论管理页面模板 #}
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+
+{#{% block title %}Flasky - Comment Moderation{% endblock %}#}
+{% block title %}底盘开发部 - 评论管理{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>评论管理 Comment Moderation</h1>
+</div>
+
+{# 渲染变量，决定是否渲染评论 -> 一般用户看不到有问题的评论 管理员可以 #}
+{#{% set moderate = True %}{% set path = 'moderatepage' %}#}
+{% set moderate = True %}{% set location = 'moderatepage' %}
+
+{% include '_comments.html' %}
+
+{# 分页按钮 #}
+{% if pagination %}
+    <div class="pagination">
+        {{ macros.pagination_widget(pagination, '.moderate') }}
+    </div>
+{% endif %}
+
+{% endblock %}

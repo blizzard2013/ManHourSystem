@@ -1,0 +1,34 @@
+{# 博客文章固定链接模板 #}
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{#{% block title %}Flasky - Post{% endblock %}#}
+{% block title %}底盘开发部 - 帖子{% endblock %}
+
+{# 帖子正文 #}
+{% block page_content %}
+{% include '_posts.html' %}
+
+{# 评论区 #}
+<h4 id="comments">评论 Comments</h4>
+
+{# 写评论 #}
+{% if current_user.can(Permission.COMMENT) %}
+<div class="comment-form">
+    {{ wtf.quick_form(form) }}
+</div>
+{% endif %}
+
+{# 评论列表 #}
+{% set location = 'postpage' %}
+{% include '_comments.html' %}
+
+{#  分页按钮  #}
+{% if pagination %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination, '.post', fragment='#comments', id=posts[0].id) }}
+</div>
+{% endif %}
+
+{% endblock %}

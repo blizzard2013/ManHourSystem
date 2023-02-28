@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}底盘开发部 - 账号确认{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>
+        Hello, {{ current_user.name }}!
+    </h1>
+    <h3>你的账号尚未激活<br>You have not confirmed your account yet.</h3>
+    <p>
+        账号启用前需先进行激活。请检查邮箱并点击确认邮件中的链接以激活的你的账号。<br>
+        Before you can access this site you need to confirm your account.
+        Check your inbox, you should have received an email with a confirmation link.<br>
+    </p>
+    <p>
+        未收到确认邮件？
+        Need another confirmation email?<br>
+        <a href="{{ url_for('auth.resend_confirmation') }}">点此重发确认邮件 Click here</a>
+    </p>
+</div>
+{% endblock %}

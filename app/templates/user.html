@@ -1,0 +1,92 @@
+{# 用户资料页面 #}
+
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+
+{% block title %}底盘开发部 - {{ user.name }}{% endblock %}
+
+{% block page_content %}
+    {# 显示Gravatar用户头像：
+        profile-thumbnail 这个CSS 类用于定位图像在页面中的位置。
+        头像后面的<div>元素把资料信息包围起来，
+        通过CSS profile-header 类改进格式 #}
+
+    {# 用户信息 #}
+    {# 用户头像 #}
+    <div class="page-header">
+        <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=256) }}">
+        <div class="profile-header">
+
+            {# 用户信息：姓名、真名、位置 #}
+            <h1>{{ user.name }}</h1>
+            {% if user.username or user.location %}
+                {# 至少定义name或location才构建p #}
+                <p>
+                    {% if user.username %}{{ user.username }}<br>{% endif %}
+                    {% if user.location %}
+                        {# 渲染成指向Google地图的查询链接 点击打卡google地图#}
+                        from <a href="http://maps.google.com/?q={{ user.location }}">
+                        {{ user.location }}</a><br>
+                    {% endif %}
+                </p>
+            {% endif %}
+
+            {# 【管理员】邮箱：如果是管理员，显示各用户的电子邮件地址，且渲染成mailto链接 #}
+            {% if current_user.is_administrator() %}
+                <p><a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
+            {% endif %}
+
+            {# 用户信息：自我介绍、注册时间、最后访问时间、发布贴子数、发布评论数 #}
+            {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
+{#            <p>Member since {{ moment(user.member_since).format('L') }}. Last seen {{ moment(user.last_seen).fromNow() }}.</p>#}
+            <p>注册时间 Member since: {{ moment(user.member_since).format('L') }}.<br> 最后访问时间 Last seen: {{ moment(user.last_seen).fromNow() }}.</p>
+{#            <p>{{ user.posts.count() }} blog posts. {{ user.comments.count() }} comments.</p>#}
+            <p>{{ user.posts.count() }} 帖子 blog posts. {{ user.comments.count() }} 评论 comments.</p>
+
+            {# 在用户资料页面添加关注按钮及关注信息 #}
+            <p>
+                {# 【不是自己】关注/取消关注按钮 #}
+                {% if current_user.can(Permission.FOLLOW) and user != current_user %}
+                    {% if not current_user.is_following(user) %}
+                        <a href="{{ url_for('.follow', name=user.name) }}" class="btn btn-primary">关注 Follow</a>
+                    {% else %}
+                        <a href="{{ url_for('.unfollow', name=user.name) }}" class="btn btn-default">取消关注 Unfollow</a>
+                    {% endif %}
+                {% endif %}
+
+                {# 关注人数 被关注人数 #}
+                <a href="{{ url_for('.followers', name=user.name) }}">被关注 Followers: <span class="badge">{{ user.followers.count() - 1 }}</span></a>
+                <a href="{{ url_for('.followed_by', name=user.name) }}">关注 Following: <span class="badge">{{ user.followed.count() - 1 }}</span></a>
+
+                {# 【关注我】关注我标签 #}
+                {% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
+                    | <span class="label label-default">已关注你 Follows you</span>
+                {% endif %}
+            </p>
+
+            {# 【用户 or 管理员】编辑资料按钮 #}
+            <p>
+            {# 如果是当前用户 添加用户编辑按钮 #}
+                {% if user == current_user %}
+                    <a class="btn btn-default" href="{{ url_for('.edit_profile') }}">编辑资料 Edit Profile</a>
+                {% endif %}
+            {# 如果是管理员 添加管理员编辑按钮 指向主蓝图中edit_profile_admin路由 #}
+                {% if current_user.is_administrator() %}
+                    <a class="btn btn-danger" href="{{ url_for('.edit_profile_admin', id=user.id) }}">编辑资料 Edit Profile [Admin]</a>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+
+    {# 帖子列表 #}
+    <h3>发布帖子 Posts by {{ user.name }}</h3>
+    {% include '_posts.html' %}
+
+    {# 分页按钮 #}
+    {% if pagination %}
+        <div class="pagination">
+            {{ macros.pagination_widget(pagination, '.user', name=user.name) }}
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,16 @@
+{# 个人资料编辑页面 #}
+
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{#{% block title %}Flasky - Edit Profile{% endblock %}#}
+{% block title %}底盘开发部 - 个人资料{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>编辑个人资料 Edit Your Profile</h1>
+</div>
+<div class="col-md-4">
+    {{ wtf.quick_form(form) }}
+</div>
+{% endblock %}

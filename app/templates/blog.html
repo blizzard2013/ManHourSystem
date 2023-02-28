@@ -1,0 +1,64 @@
+{% extends "base.html" %}  {# 继承父模板 #}
+{% import "bootstrap/wtf.html" as wtf %}  {# 导入表单渲染模板 #}
+{% import "_macros.html" as macros %}  {# 导入分页模板宏 #}
+
+{% block title %}底盘开发部{% endblock %}  {# 页面标题 #}
+
+{% block page_content %}
+
+{# 背景图片 只能特定位置 不能全屏平铺 #}
+{#<header class="intro-header" style="background-image: url({{ url_for('static', filename='gogogo.jpg') }})">#}
+{#放置图片#}
+    {#    <img src="{{ url_for('static', filename='gogogo1.jpg') }}" alt="background-repeat: no-repeat; background-size: 100% 100%;">#}
+{#    <img src="{{ url_for('static', filename='gogogo.jpg') }}">#}
+
+{# 欢迎口号 #}
+<div class="page-header">
+{#    <h1>Hello, {% if current_user.is_authenticated %}{{ current_user.name }}{% else %}Stranger{% endif %}!</h1>#}
+    <h1>
+        {% if current_user.is_authenticated %}
+            Hello, {{ current_user.name }}
+{#            奥力给！ {{ current_user.name }}#}
+        {% else %}
+            你好，奋斗者！Hello, Fighter!
+        {% endif %}
+    </h1>
+</div>
+
+{# 写博客 #}
+<div>
+    {# 如果用户所属角色没有WRITE 权限，经User.can() 方法检查后，不会显示写博客表单 #}
+    {# can(Permission.WRITE_ARTICLES) ？#}
+    {% if current_user.can(Permission.WRITE) %}
+    {{ wtf.quick_form(form) }}
+    {% endif %}
+</div>
+
+{# 帖子列表 #}
+<div class="post-tabs">
+    {# 切换按钮：关联的视图函数修改cookie中的显示参数 #}
+    <ul class="nav nav-tabs">
+        <li{% if not show_followed %} class="active"{% endif %}><a href="{{ url_for('.show_all') }}">所有帖子 All</a></li>
+        {% if current_user.is_authenticated %}
+            <li{% if show_followed %} class="active"{% endif %}><a href="{{ url_for('.show_followed') }}">我的关注 Followed</a></li>
+        {% endif %}
+    </ul>
+    {# 从_posts.html导入模板：博客文章列表，具体显示内容根据参数确定 #}
+    {% include '_posts.html' %}
+</div>
+
+{# 使用从_marcos引入的分页按钮 #}
+{% if pagination %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination, '.index') }}
+</div>
+{% endif %}
+
+{% endblock %}
+
+
+{# 新博客表单：支持富文本markdown格式 #}
+{% block scripts %}
+{{ super() }}
+{{ pagedown.include_pagedown() }}
+{% endblock %}

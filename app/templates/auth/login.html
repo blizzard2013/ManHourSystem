@@ -1,0 +1,27 @@
+{% extends "base.html" %}  <!--继承父模板-->
+{% import "bootstrap/wtf.html" as wtf %}  <!--导入表单渲染模板-->
+
+{#{% block title %}Flasky - Login{% endblock %}#}
+{% block title %}底盘开发部 - 登录{% endblock %}
+
+
+{% block page_content %}
+
+
+{#背景图片#}
+{#<header class="intro-header" style="background-image: url({{ url_for('static', filename='gogogo.jpg') }})">#}
+{#<div class="mainimg" style="height:400px;background-image:url({{ url_for('static', filename='aaa.jpg') }})"></div>#}
+
+
+<div class="page-header">
+    <h1>登录 Login</h1>
+</div>
+<div class="col-md-4">
+    {{ wtf.quick_form(form) }}
+    <br>
+{#    <p>忘记密码 Forgot your password?<br> <a href="{{ url_for('auth.password_reset_request') }}">点击此处重设密码 Click here to reset it</a>.</p>#}
+    <p>忘记密码 Forgot your password?<br> <a href="{{ url_for('auth.password_reset_request_without_email') }}">点击此处重设密码 Click here to reset it</a>.</p>
+    <p>新用户 New user?<br> <a href="{{ url_for('auth.register') }}">点击此处注册新用户 Click here to register</a>.</p>
+</div>
+{% endblock %}
+

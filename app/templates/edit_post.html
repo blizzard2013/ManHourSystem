@@ -1,0 +1,23 @@
+{# 帖子编辑模板：上面有个文本框，显示博客文章的Markdown文本，并在下方显示预览 #}
+
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}底盘开发部 - 编辑帖子{% endblock %}
+
+{% block page_content %}
+
+<div class="page-header">
+    <h1>编辑帖子 Edit Post</h1>
+</div>
+
+<div>
+    {{ wtf.quick_form(form) }}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{{ pagedown.include_pagedown() }}
+{% endblock %}

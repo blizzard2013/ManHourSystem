@@ -1,0 +1,103 @@
+{# 评论管理页面模板 #}
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+
+{#{% block title %}Flasky - Comment Moderation{% endblock %}#}
+{% block title %}底盘开发部 - 工时审批{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>工时审批 Workhour Approve</h1>
+</div>
+
+
+
+<ul class="posts">
+{#         格式：行高1 位置左 #}
+
+{#    表头部分 #}
+    <li class="post">
+{#         格式：行高2 位置中 #}
+{#        <div class="post-content">   #}
+
+        <div class="row">
+            <div class="col-sm-2 col-md-1">工程师</div>
+            <div class="ol-sm-3 col-md-3">工作内容</div>
+            <div class="ol-sm-1 col-md-1">工时</div>
+            <div class="ol-sm-1 col-md-2">提交时间</div>
+            <div class="ol-sm-1 col-md-2">状态</div>
+{#            <div class="ol-sm-1 col-md-1">确认时间</div>#}
+        </div>
+{#        </div>#}
+    </li>
+
+
+{#    工时列表 & 格式 #}
+
+    {% for workhour in workhours %}
+
+
+    <li class="post">
+    {# 单项工时格式 #}
+{#        <div class="post-content">  {# 格式 右移 #}
+        <div>
+
+        <div class="row">
+            {# 项目 project_id -> 通过id查项目名称 #}
+{#            <div class="post-author"><a href="{{ url_for('.user', name=post.author.name) }}">{{ post.author.name }}</a></div>#}
+            <div class="col-sm-2 col-md-1">{{ workhour.name }}</div>  {# 工作内容 work #}
+            <div class="ol-sm-3 col-md-3">{{ workhour.work }}</div>  {# 工作内容 work #}
+            <div class="ol-sm-1 col-md-1">{{ workhour.hour }}</div>  {# 工时 work #}
+            <div class="ol-sm-1 col-md-2">{{ workhour.submit_time[:-7] }}</div>  {# 工时 work #}
+            <div class="ol-sm-1 col-md-2">{{ workhour.state }}</div>  {# 工时 work #}
+{#            <div class="ol-sm-1 col-md-1">{{ workhour.confirm_time }}</div>  {# 工时 work #}
+{#        </div>#}
+
+{#             文章的固定链接及各种按钮 显示在文章下方 #}
+{#            <div class="post-footer">#}
+            {% if workhour.state == '已提交待审批' %}
+
+{#                 审批按钮：UPL在自己项目下加按钮 管理员在所有项目下加按钮 #}
+                {% if current_user.id == workhour.upl_id %}
+                    <a href="{{ url_for('.workhour_ok', id=workhour.id) }}">
+                        <span class="label label-success">批准 OK</span></a>
+                    <a href="{{ url_for('.workhour_nok', id=workhour.id) }}">
+                        <span class="label label-danger">驳回 NOK</span></a>
+
+                {% elif current_user.is_administrator() %}
+                    <a href="{{ url_for('.workhour_ok', id=workhour.id) }}">
+                        <span class="label label-success">批准 OK [Admin]</span></a>
+                    <a href="{{ url_for('.workhour_nok', id=workhour.id) }}">
+                        <span class="label label-danger">驳回 NOK [Admin]</span></a>
+                {% endif %}
+
+            {% endif %}
+
+            </div>
+
+        </div>
+    </li>
+    {% endfor %}
+
+
+</ul>
+
+
+{# 渲染变量，决定是否渲染评论 -> 一般用户看不到有问题的评论 管理员可以 #}
+{#{% set moderate = True %}{% set path = 'moderatepage' %}#}
+{#{% set moderate = True %}{% set location = 'moderatepage' %}#}
+
+
+
+
+{#    导入模块#}
+{#{% include '_comments.html' %} #}
+
+{#分页按钮    #}
+{#{% if pagination %}#}
+{#    <div class="pagination">#}
+{#        {{ macros.pagination_widget(pagination, '.moderate') }}#}
+{#    </div>#}
+{#{% endif %}#}
+
+{% endblock %}

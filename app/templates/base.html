@@ -1,0 +1,137 @@
+{# 基版 #}
+
+{% extends "bootstrap/base.html" %}
+
+{#{% block title %}Flasky{% endblock %}#}
+{% block title %}底盘开发部{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+<link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+{% endblock %}
+
+{# +++顶部标题栏部分+++ #}
+{% block navbar %}
+<div class="navbar navbar-inverse" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            {# 顶部标题 链接 #}
+            <a class="navbar-brand" href="{{ url_for('main.index') }}">底盘开发部 Chassis</a>
+        </div>
+
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+
+                {# 首页按钮 #}
+{#                <li><a href="{{ url_for('main.index') }}">首页 Home</a></li>#}
+
+                {# 如果当前用户登录凭据有效 #}
+                {% if current_user.is_authenticated %}
+                    <li><a href="{{ url_for('main.workhour') }}">工时填报 WorkHour </a></li>  {# 工时填报按钮 #}
+
+                    {% if current_user.can(Permission.MODERATE) %}
+                        <li><a href="{{ url_for('main.workhourTotal') }}">工时审批 WorkHour Approve</a></li>
+                    {% endif %}
+
+                {% endif %}
+            </ul>
+
+
+            <ul class="nav navbar-nav navbar-right">
+
+            {% if current_user.is_authenticated %}
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">稳中求疵 Tell it like it is<b class="caret"></b></a>
+
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url_for('main.blog') }}">我要吐槽 I have an idea！</a></li>
+
+                        {% if current_user.can(Permission.MODERATE) %}
+                                <li><a href="{{ url_for('main.moderate') }}">评论管理 Moderate Comments</a></li>
+                        {% endif %}
+
+                    </ul>
+                </li>
+
+
+                {% if current_user.is_administrator() %}
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">管理员 Admin <b class="caret"></b></a>
+
+                    <ul class="dropdown-menu">
+                        <li><a href="/admin/">数据库 DataBase</a></li>
+{#                        <li><a href="#">[开发中]管理模块 Management</a></li>#}
+                        <li><a href="#">其他管理功能[需求？]</a></li>
+{#                        <li><a href="{{ url_for('auth.change_password') }}">更改密码 Change Password</a></li>#}
+                    </ul>
+                </li>
+                {% endif %}
+
+
+
+            {% endif %}
+
+
+            {# 下拉列表部分 #}
+            {# 修改密码/修改邮箱/登入/登出链接 #}
+                {% if current_user.is_authenticated %}
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <img src="{{ current_user.gravatar(size=18) }}">用户 Account <b class="caret"></b>
+                    </a>
+
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url_for('main.user', name=current_user.name) }}">个人资料 Profile</a></li>
+                        <li><a href="{{ url_for('auth.change_password') }}">更改密码 Change Password</a></li>
+{#                        <li><a href="{{ url_for('auth.change_email_request') }}">更改邮箱 Change Email</a></li>#}
+                        <li><a href="{{ url_for('auth.logout') }}">退出登录 Log Out</a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <li><a href="{{ url_for('auth.login') }}">登录 Log In</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{# +++正文部分+++ #}
+{% block content %}
+    <div class="container">
+
+        {#  闪现消息  #}
+        {% for message in get_flashed_messages() %}
+            <div class="alert alert-warning">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {# +++正文内容+++ #}
+        {% block page_content %}{% endblock %}
+    </div>
+{% endblock %}
+
+{# +++脚本部分+++ #}
+{% block scripts %}  {# 脚本及支持代码 ==》基模板中已经预定义，因此位置放在任何位置都行 #}
+    {{ super() }}  {# 继承基模板Flask-Bootstrap中已经预定义的内容 #}
+    {{ moment.include_moment() }}  {# 引入Moment.js（使用JavaScript 开发的客户端开源库） 用于在浏览器中渲染日期和时间 #}
+    {{ moment.lang("zh-CN") }}  {# moment时间戳本地化：中文格式 #}
+{% endblock %}
+
+
+{# <script>#}
+{#        $.ajaxSetup({#}
+{#            data:{csrfmiddlewaretoken:'{{ csrf_token }}'}#}
+{#        })#}
+{#</script>#}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}  {# 继承父模板 #}
+{% import "bootstrap/wtf.html" as wtf %}  {# 导入表单渲染模板 #}
+
+{% block title %}底盘开发部{% endblock %}  {# 页面标题 #}
+
+{% block page_content %}
+
+{# 背景图片 只能特定位置 不能全屏平铺 #}
+{#<header class="intro-header" style="background-image: url({{ url_for('static', filename='gogogo.jpg') }})">#}
+{#放置图片#}
+    {#    <img src="{{ url_for('static', filename='gogogo1.jpg') }}" alt="background-repeat: no-repeat; background-size: 100% 100%;">#}
+{#    <img src="{{ url_for('static', filename='gogogo.jpg') }}">#}
+
+    {# 欢迎口号 #}
+    <div class="page-header">
+    {#    <h1>Hello, {% if current_user.is_authenticated %}{{ current_user.name }}{% else %}Stranger{% endif %}!</h1>#}
+        <h1>
+            {% if current_user.is_authenticated %}
+                Hello, {{ current_user.name }}
+    {#            奥力给！ {{ current_user.name }}#}
+                <br><br>
+                知止而后有定，定而后能静，静而后能安，安而后能虑，虑而后能得。
+            {% else %}
+                你好，奋斗者！Hello, Fighter!
+            {% endif %}
+        </h1>
+    </div>
+
+
+{% endblock %}
+
+

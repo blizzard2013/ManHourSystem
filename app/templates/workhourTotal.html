@@ -1,0 +1,139 @@
+{# 评论管理页面模板 #}
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+
+{#{% block title %}Flasky - Comment Moderation{% endblock %}#}
+{% block title %}底盘开发部 - 工时状态{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>工时状态 Workhour State</h1>
+{#    <h1>工时审批 Workhour Approve</h1>#}
+</div>
+
+{# 渲染变量，决定是否渲染评论 -> 一般用户看不到有问题的评论 管理员可以 #}
+{#{% set moderate = True %}{% set path = 'moderatepage' %}#}
+{#{% set moderate = True %}{% set location = 'moderatepage' %}#}
+
+
+<ul class="posts">
+{#         格式：行高1 位置左 #}
+
+{#    表头部分 #}
+    <li class="post">
+{#         格式：行高2 位置中 #}
+{#        <div class="post-content">   #}
+
+        <div class="row">
+            <div class="col-md-2">项目</div>
+            <div class="col-md-1">填报人数</div>
+            <div class="col-md-1">填报工时</div>
+            <div class="col-md-1">批准人数</div>
+            <div class="col-md-1">批准工时</div>
+            <div class="col-md-1">驳回人数</div>
+            <div class="col-md-1">驳回工时</div>
+            <div class="col-md-1">待批人数</div>
+            <div class="col-md-1">待批工时</div>
+        </div>
+{#        </div>#}
+    </li>
+
+
+{#    工时列表 & 格式 #}
+{#{% set totalhour = 0 %}#}
+
+    {% for project in project_state %}
+
+{#        工时不会循环计算？ why #}
+{#        {% set totalhour = totalhour + workhour.hour %}#}
+{#            当前总工时：{{ totalhour }}#}
+
+{#        {{ totalhour = totalhour + workhour.hour }}#}
+
+    <li class="post">
+    {# 单项工时格式 #}
+{#        <div class="post-content">  {# 格式 右移 #}
+        <div>
+
+        <div class="row">
+            {# 项目 project_id -> 通过id查项目名称 #}
+{#            <div class="post-author"><a href="{{ url_for('.user', name=post.author.name) }}">{{ post.author.name }}</a></div>#}
+
+            <div class="col-md-2 ">{{ project.name }}</div>  {# 项目名称 #}
+            <div class="col-md-1 ">{{ project.totalnum }}</div>  {# 工作内容 #}
+            <div class="col-md-1">{{ project.totalhours | round(2) }}</div>  {# 工时 #}
+            <div class="col-md-1">{{ project.oknum }}</div>  {# 工时 #}
+            <div class="col-md-1">{{ project.okhours | round(2) }}</div>  {# 工时 #}
+            <div class="col-md-1">{{ project.noknum }}</div>  {# 工时 #}
+            <div class="col-md-1">{{ project.nokhours | round(2) }}</div>  {# 工时 #}
+            <div class="col-md-1">{{ project.tbdnum }}</div>  {# 工时 #}
+            <div class="col-md-1">{{ project.tbdhours | round(2) }}</div>  {# 工时 #}
+
+
+
+{#        </div>#}
+
+{#             文章的固定链接及各种按钮 显示在文章下方 #}
+{#            <div class="post-footer">#}
+{#            {% if project.project_id %}#}
+
+{#                 帖子编辑按钮+删除按钮：当前用户在自己文章下加按钮 管理员在所有文章下加按钮 #}
+                {% if current_user.id == project.upl_id %}
+                    <a href="{{ url_for('.workhourApprove', id=project.project_id) }}">
+                        <span class="label label-primary">审批 Approve</span></a>
+
+                {% elif current_user.is_administrator() %}
+                    <a href="{{ url_for('.workhourApprove', id=project.project_id) }}">
+                        <span class="label label-warning">审批 Approve [Admin]</span></a>
+                {% endif %}
+
+{#            {% endif %}#}
+
+
+{#【+】弹窗测试#}
+{#<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">弹窗测试</button>#}
+
+
+
+
+{#                代码参考：post   #}
+                {# 帖子编辑按钮+删除按钮：当前用户在自己文章下加按钮 管理员在所有文章下加按钮 #}
+{#                {% if current_user == post.author %}#}
+{#                    <a href="{{ url_for('.edit', id=post.id) }}">#}
+{#                        <span class="label label-primary">编辑 Edit</span></a>#}
+{#                    <a href="{{ url_for('.delete', id=post.id) }}">#}
+{#                        <span class="label label-danger">删除 Delete</span></a>#}
+{##}
+{#                {% elif current_user.is_administrator() %}#}
+{#                    <a href="{{ url_for('.edit', id=post.id) }}">#}
+{#                        <span class="label label-danger">编辑 Edit [Admin]</span></a>#}
+{#                    <a href="{{ url_for('.delete', id=post.id) }}">#}
+{#                        <span class="label label-danger">删除 Delete [Admin]</span></a>#}
+{#                {% endif %}#}
+{#            #}
+                {# 帖子内容链接按钮 #}
+{#                <a href="{{ url_for('.post', id=post.id) }}">#}
+{#                    <span class="label label-default">博客链接 Permalink</span>#}
+{#                </a>#}
+{##}
+                {# 帖子评论链接按钮链 #}
+{#                <a href="{{ url_for('.post', id=post.id) }}#comments">#}
+{#                    <span class="label label-primary">{{ post.comments.count() }} 评论 Comments</span>#}
+{#                </a>#}
+            </div>
+
+        </div>
+    </li>
+    {% endfor %}
+
+
+</ul>
+
+{#分页按钮    #}
+{#{% if pagination %}#}
+{#    <div class="pagination">#}
+{#        {{ macros.pagination_widget(pagination, '.moderate') }}#}
+{#    </div>#}
+{#{% endif %}#}
+
+{% endblock %}
